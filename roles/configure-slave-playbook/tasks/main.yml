@@ -1,0 +1,34 @@
+---
+# tasks file for configure-slave-playbook
+
+
+- name: Create ansible user
+  user:
+   name: ansible
+   state: present
+   generate_ssh_key: yes
+
+
+
+# Copy  ssh key to server
+
+- name: Copy SSH key to authorized keys
+  authorized_key:
+   user: ansible
+   state: present
+   key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
+
+# Give it sudo rights with no passwd
+
+- name: Add sudo rights
+  lineinfile:
+   line: "ansible	ALL=(ALL)	NOPASSWD: ALL"
+   path: /etc/sudoers
+   state: present
+
+
+- name: Restart SSH service
+  service:
+   name: sshd
+   state: restarted
+

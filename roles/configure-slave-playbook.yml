@@ -1,0 +1,15 @@
+---
+
+# Run this playbook with --ask-become-pass and --ask-pass
+
+- name: Configure servers for remote access with ansible
+  hosts: all
+  gather_facts: no
+  remote_user: user
+  become: yes
+
+
+  roles:
+
+   - configure-slave-playbook
+  
