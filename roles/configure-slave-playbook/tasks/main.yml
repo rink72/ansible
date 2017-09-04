@@ -8,21 +8,37 @@
    state: present
    generate_ssh_key: yes
 
+- name: Create jenkins user
+  user:
+   name: jenkins
+   state: present
+   generate_ssh_key: yes
 
+# Copy ssh keys to server
 
-# Copy  ssh key to server
-
-- name: Copy SSH key to authorized keys
+- name: Copy ansible SSH key to authorized keys
   authorized_key:
    user: ansible
    state: present
    key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
 
-# Give it sudo rights with no passwd
+- name: Copy jenkins SSH key to authorized keys
+  authorized_keys:
+  user: jenkins
+  state: present
+  key: "{{ lookup('file', '/var/lib/jenkins/.ssh/id_rsa.pub') }}"
 
-- name: Add sudo rights
+# Give then sudo rights with no passwd
+
+- name: Add ansible sudo rights
   lineinfile:
    line: "ansible	ALL=(ALL)	NOPASSWD: ALL"
+   path: /etc/sudoers
+   state: present
+
+- name: Add jenkins sudo rights
+  lineinfile:
+   line: "jenkins	ALL=(ALL)	NOPASSWD: ALL"
    path: /etc/sudoers
    state: present
 
